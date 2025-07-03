@@ -2,7 +2,7 @@
 # Format: Title - URL (one per line)
 # Or just put the URL directly
 
-Computer Architecture Slides - https://drive.google.com/file/d/1234567890/view
+Computer Architecture Slides - https://drive.google.com/file/d/12cm8tTIOUpbKTX-Pr8iNBaPyebnRXlmj/view?usp=sharing
 Data Structures Notes - https://onedrive.live.com/view.aspx?resid=ABC123
 Programming Tutorial - https://www.dropbox.com/s/example/tutorial.pdf
 
