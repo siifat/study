@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Notes Repository</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><i class="fas fa-book"></i> Study Notes Repository</h1>
+            <p>Access and download PDF notes and markdown files</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="search-section">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search notes by filename or content...">
+                <button id="clearSearch" class="clear-btn" title="Clear search">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">All Files</button>
+                <button class="filter-btn" data-filter="pdf">PDF Notes</button>
+                <button class="filter-btn" data-filter="md">Markdown Files</button>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-number" id="totalFiles">0</span>
+                <span class="stat-label">Total Files</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="pdfCount">0</span>
+                <span class="stat-label">PDF Notes</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="mdCount">0</span>
+                <span class="stat-label">Markdown Files</span>
+            </div>
+        </div>
+
+        <div id="loadingIndicator" class="loading">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>Loading notes...</span>
+        </div>
+
+        <div id="errorMessage" class="error-message" style="display: none;">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>Error loading notes. Please make sure the repository structure is correct.</span>
+        </div>
+
+        <div id="noResults" class="no-results" style="display: none;">
+            <i class="fas fa-search"></i>
+            <span>No notes found matching your search.</span>
+        </div>
+
+        <div id="filesList" class="files-grid">
+            <!-- Files will be populated here by JavaScript -->
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Study Notes Repository. Built for easy access to educational materials.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
