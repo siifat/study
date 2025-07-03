@@ -21,6 +21,7 @@ const CONFIG = {
 let allFiles = [];
 let filteredFiles = [];
 let currentFilter = 'all';
+let currentCategory = 'all';
 
 // DOM elements
 const searchInput = document.getElementById('searchInput');
@@ -33,6 +34,7 @@ const totalFilesCount = document.getElementById('totalFiles');
 const pdfCountElement = document.getElementById('pdfCount');
 const mdCountElement = document.getElementById('mdCount');
 const filterButtons = document.querySelectorAll('.filter-btn');
+const categoryButtons = document.querySelectorAll('.category-btn');
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
@@ -63,6 +65,15 @@ function setupEventListeners() {
         btn.addEventListener('click', () => {
             const filter = btn.dataset.filter;
             setActiveFilter(filter);
+            applyFilters();
+        });
+    });
+    
+    // Category buttons
+    categoryButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const category = btn.dataset.category;
+            setActiveCategory(category);
             applyFilters();
         });
     });
@@ -129,7 +140,8 @@ async function loadFilesFromFolder(folder) {
                     size: item.size,
                     downloadUrl: item.download_url,
                     htmlUrl: item.html_url,
-                    type: getFileType(item.name)
+                    type: getFileType(item.name),
+                    category: getFileCategory(item.path)
                 });
             } else if (item.type === 'dir') {
                 // Recursively load subdirectories
@@ -154,6 +166,35 @@ function getFileType(filename) {
     const extension = getFileExtension(filename);
     if (extension === '.pdf') return 'pdf';
     if (['.md', '.markdown'].includes(extension)) return 'md';
+    return 'other';
+}
+
+function getFileCategory(filepath) {
+    const pathLower = filepath.toLowerCase();
+    
+    // Check for category keywords in the file path
+    if (pathLower.includes('data-structure') || pathLower.includes('algorithm') || pathLower.includes('dsa')) {
+        return 'data-structures';
+    }
+    if (pathLower.includes('computer-architecture') || pathLower.includes('architecture') || pathLower.includes('coa')) {
+        return 'computer-architecture';
+    }
+    if (pathLower.includes('electronics') || pathLower.includes('circuit') || pathLower.includes('electronic')) {
+        return 'electronics';
+    }
+    if (pathLower.includes('programming') || pathLower.includes('coding') || pathLower.includes('java') || pathLower.includes('python') || pathLower.includes('cpp')) {
+        return 'programming';
+    }
+    if (pathLower.includes('math') || pathLower.includes('calculus') || pathLower.includes('algebra') || pathLower.includes('statistics')) {
+        return 'mathematics';
+    }
+    if (pathLower.includes('network') || pathLower.includes('networking') || pathLower.includes('tcp') || pathLower.includes('ip')) {
+        return 'networking';
+    }
+    if (pathLower.includes('database') || pathLower.includes('sql') || pathLower.includes('dbms')) {
+        return 'database';
+    }
+    
     return 'other';
 }
 
@@ -197,11 +238,24 @@ function setActiveFilter(filter) {
     });
 }
 
+function setActiveCategory(category) {
+    currentCategory = category;
+    categoryButtons.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.category === category);
+    });
+}
+
 function applyFilters() {
     let displayFiles = [...filteredFiles];
     
+    // Apply file type filter
     if (currentFilter !== 'all') {
         displayFiles = displayFiles.filter(file => file.type === currentFilter);
+    }
+    
+    // Apply category filter
+    if (currentCategory !== 'all') {
+        displayFiles = displayFiles.filter(file => file.category === currentCategory);
     }
     
     renderFiles(displayFiles);
@@ -229,6 +283,10 @@ function createFileCard(file) {
     const iconClass = file.type === 'pdf' ? 'fas fa-file-pdf pdf' : 'fab fa-markdown md';
     const fileSize = formatFileSize(file.size);
     
+    // Create unique button IDs for event handling
+    const viewBtnId = `view-${Math.random().toString(36).substr(2, 9)}`;
+    const downloadBtnId = `download-${Math.random().toString(36).substr(2, 9)}`;
+    
     card.innerHTML = `
         <div class="file-header">
             <i class="${iconClass} file-icon"></i>
@@ -237,11 +295,11 @@ function createFileCard(file) {
             <div class="file-size">${fileSize}</div>
         </div>
         <div class="file-actions">
-            <a href="${file.downloadUrl}" target="_blank" class="action-btn view-btn">
+            <button id="${viewBtnId}" class="action-btn view-btn">
                 <i class="fas fa-eye"></i>
                 View
-            </a>
-            <a href="${file.downloadUrl}" download="${file.name}" class="action-btn download-btn">
+            </button>
+            <a id="${downloadBtnId}" href="${file.downloadUrl}" download="${file.name}" class="action-btn download-btn">
                 <i class="fas fa-download"></i>
                 Download
             </a>
@@ -250,6 +308,16 @@ function createFileCard(file) {
             </button>
         </div>
     `;
+    
+    // Add event listener for view button after card is created
+    setTimeout(() => {
+        const viewBtn = document.getElementById(viewBtnId);
+        if (viewBtn) {
+            viewBtn.addEventListener('click', () => {
+                window.open(file.downloadUrl, '_blank');
+            });
+        }
+    }, 0);
     
     return card;
 }
