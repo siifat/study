@@ -309,6 +309,23 @@ main {
     color: #28a745;
 }
 
+.file-icon.link {
+    color: #007bff;
+}
+
+.online-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: #e3f2fd;
+    color: #1976d2;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin-top: 0.5rem;
+}
+
 .file-name {
     font-size: 1.1rem;
     font-weight: 600;

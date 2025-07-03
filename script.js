@@ -10,7 +10,16 @@ const CONFIG = {
     NOTE_FOLDERS: ['notes', 'pdfs', 'markdown', 'documents', ''], // Empty string scans Root
     
     // File extensions to include
-    ALLOWED_EXTENSIONS: ['.pdf', '.md', '.markdown'],
+    ALLOWED_EXTENSIONS: ['.pdf', '.md', '.markdown', '.txt'],
+    
+    // Online link patterns to detect
+    ONLINE_LINK_PATTERNS: [
+        'drive.google.com',
+        'onedrive.live.com',
+        '1drv.ms',
+        'sharepoint.com',
+        'dropbox.com'
+    ],
     
     // GitHub API base URL
     GITHUB_API_BASE: 'https://api.github.com',
@@ -141,8 +150,32 @@ async function loadFilesFromFolder(folder) {
                     downloadUrl: item.download_url,
                     htmlUrl: item.html_url,
                     type: getFileType(item.name),
-                    category: getFileCategory(item.path)
+                    category: getFileCategory(item.path),
+                    isOnline: false
                 });
+            } else if (item.type === 'file' && item.name.toLowerCase().includes('links') && item.name.endsWith('.txt')) {
+                // Handle links files
+                try {
+                    const response = await fetch(item.download_url);
+                    const content = await response.text();
+                    const links = parseLinksFile(content);
+                    
+                    links.forEach(link => {
+                        allFiles.push({
+                            name: link.title,
+                            path: item.path + ' → ' + link.title,
+                            size: 0,
+                            downloadUrl: link.url,
+                            htmlUrl: link.url,
+                            type: 'link',
+                            category: getFileCategory(item.path),
+                            isOnline: true,
+                            originalUrl: link.url
+                        });
+                    });
+                } catch (error) {
+                    console.warn('Could not parse links file:', item.name);
+                }
             } else if (item.type === 'dir') {
                 // Recursively load subdirectories
                 await loadFilesFromFolder(item.path);
@@ -158,6 +191,41 @@ function isAllowedFile(filename) {
     return CONFIG.ALLOWED_EXTENSIONS.includes(extension);
 }
 
+function isOnlineLink(content) {
+    return CONFIG.ONLINE_LINK_PATTERNS.some(pattern => 
+        content.toLowerCase().includes(pattern)
+    );
+}
+
+function parseLinksFile(content) {
+    const links = [];
+    const lines = content.split('\n');
+    
+    for (const line of lines) {
+        const trimmed = line.trim();
+        if (trimmed && (trimmed.startsWith('http') || isOnlineLink(trimmed))) {
+            // Extract title from line (format: "Title - URL" or just "URL")
+            const parts = trimmed.split(' - ');
+            if (parts.length >= 2) {
+                links.push({
+                    title: parts[0].trim(),
+                    url: parts[1].trim()
+                });
+            } else {
+                // Try to extract filename from URL
+                const urlObj = new URL(trimmed);
+                const pathname = urlObj.pathname;
+                const filename = pathname.split('/').pop() || 'Online File';
+                links.push({
+                    title: filename,
+                    url: trimmed
+                });
+            }
+        }
+    }
+    return links;
+}
+
 function getFileExtension(filename) {
     return filename.toLowerCase().substring(filename.lastIndexOf('.'));
 }
@@ -166,6 +234,7 @@ function getFileType(filename) {
     const extension = getFileExtension(filename);
     if (extension === '.pdf') return 'pdf';
     if (['.md', '.markdown'].includes(extension)) return 'md';
+    if (extension === '.txt') return 'txt';
     return 'other';
 }
 
@@ -280,8 +349,12 @@ function createFileCard(file) {
     const card = document.createElement('div');
     card.className = 'file-card';
     
-    const iconClass = file.type === 'pdf' ? 'fas fa-file-pdf pdf' : 'fab fa-markdown md';
-    const fileSize = formatFileSize(file.size);
+    let iconClass = 'fas fa-file';
+    if (file.type === 'pdf') iconClass = 'fas fa-file-pdf pdf';
+    else if (file.type === 'md') iconClass = 'fab fa-markdown md';
+    else if (file.type === 'link') iconClass = 'fas fa-link link';
+    
+    const fileSize = file.isOnline ? 'Online File' : formatFileSize(file.size);
     
     // Create unique button IDs for event handling
     const viewBtnId = `view-${Math.random().toString(36).substr(2, 9)}`;
@@ -293,17 +366,18 @@ function createFileCard(file) {
             <div class="file-name">${escapeHtml(file.name)}</div>
             <div class="file-path">${escapeHtml(file.path)}</div>
             <div class="file-size">${fileSize}</div>
+            ${file.isOnline ? '<div class="online-badge"><i class="fas fa-cloud"></i> Online</div>' : ''}
         </div>
         <div class="file-actions">
             <button id="${viewBtnId}" class="action-btn view-btn">
-                <i class="fas fa-eye"></i>
-                View
+                <i class="fas fa-${file.isOnline ? 'external-link-alt' : 'eye'}"></i>
+                ${file.isOnline ? 'Open' : 'View'}
             </button>
-            <a id="${downloadBtnId}" href="${file.downloadUrl}" download="${file.name}" class="action-btn download-btn">
-                <i class="fas fa-download"></i>
-                Download
+            <a id="${downloadBtnId}" href="${file.downloadUrl}" ${file.isOnline ? 'target="_blank"' : `download="${file.name}"`} class="action-btn download-btn">
+                <i class="fas fa-${file.isOnline ? 'external-link-alt' : 'download'}"></i>
+                ${file.isOnline ? 'Access' : 'Download'}
             </a>
-            <button class="action-btn copy-btn" onclick="copyToClipboard('${file.downloadUrl}')" title="Copy download link">
+            <button class="action-btn copy-btn" onclick="copyToClipboard('${file.downloadUrl}')" title="Copy link">
                 <i class="fas fa-copy"></i>
             </button>
         </div>
