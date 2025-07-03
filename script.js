@@ -2,8 +2,8 @@
 const CONFIG = {
     // GitHub repository information
     // Update these values with your actual repository details
-    GITHUB_USER: 'siifat', // Replace with your GitHub username
-    GITHUB_REPO: 'https://github.com/siifat/study.git', // Replace with your repository name
+    GITHUB_USER: 'siifat', // Your GitHub username
+    GITHUB_REPO: 'study', // Your repository name
     GITHUB_BRANCH: 'main', // Usually 'main' or 'master'
     
     // Folders to scan for notes (relative to repository root)

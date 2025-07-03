@@ -28,7 +28,7 @@ baseurl: "/study"
 
 # GitHub Pages specific settings
 github:
-  repository_name: "https://github.com/siifat/study.git"
+  repository_name: "study"
   owner_name: "siifat"
 
 # Plugins (GitHub Pages automatically includes these)
