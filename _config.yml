@@ -23,13 +23,13 @@ highlighter: rouge
 # Site settings for better SEO
 title: "Study Notes Repository"
 description: "Access and download PDF notes and markdown files"
-url: "https://your-username.github.io"
-baseurl: "/your-repo-name"
+url: "https://siifat.github.io"
+baseurl: "/study"
 
 # GitHub Pages specific settings
 github:
-  repository_name: "your-repo-name"
-  owner_name: "your-username"
+  repository_name: "https://github.com/siifat/study.git"
+  owner_name: "siifat"
 
 # Plugins (GitHub Pages automatically includes these)
 plugins:
