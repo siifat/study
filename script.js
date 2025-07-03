@@ -237,11 +237,11 @@ function createFileCard(file) {
             <div class="file-size">${fileSize}</div>
         </div>
         <div class="file-actions">
-            <a href="${file.htmlUrl}" target="_blank" class="action-btn view-btn">
+            <a href="${file.downloadUrl}" target="_blank" class="action-btn view-btn">
                 <i class="fas fa-eye"></i>
                 View
             </a>
-            <a href="${file.downloadUrl}" download class="action-btn download-btn">
+            <a href="${file.downloadUrl}" download="${file.name}" class="action-btn download-btn">
                 <i class="fas fa-download"></i>
                 Download
             </a>
