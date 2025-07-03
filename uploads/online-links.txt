@@ -11,7 +11,16 @@ Programming Tutorial - https://www.dropbox.com/s/example/tutorial.pdf
 # https://1drv.ms/b/s!your-onedrive-link
 
 # Supported platforms:
-# - Google Drive
-# - OneDrive  
+# - Google Drive (with preview support)
+# - OneDrive (with preview support)  
 # - SharePoint
 # - Dropbox
+
+# Tips for Google Drive:
+# 1. Make sure the file is set to "Anyone with the link can view"
+# 2. Use the share link format: https://drive.google.com/file/d/FILE_ID/view?usp=sharing
+# 3. Preview button will show the file directly in the website
+
+# Tips for OneDrive:
+# 1. Share the file and use the generated link
+# 2. Make sure permissions are set to "Anyone with the link can view"

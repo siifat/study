@@ -7,7 +7,7 @@ const CONFIG = {
     GITHUB_BRANCH: 'main', // Usually 'main' or 'master'
     
     // Folders to scan for notes (relative to repository root)
-    NOTE_FOLDERS: ['notes', 'pdfs', 'markdown', 'documents', ''], // Empty string scans Root
+    NOTE_FOLDERS: ['uploads'], // Only scan uploads directory
     
     // File extensions to include
     ALLOWED_EXTENSIONS: ['.pdf', '.md', '.markdown', '.txt'],
@@ -165,12 +165,16 @@ async function loadFilesFromFolder(folder) {
                             name: link.title,
                             path: item.path + ' → ' + link.title,
                             size: 0,
-                            downloadUrl: link.url,
-                            htmlUrl: link.url,
+                            downloadUrl: link.downloadUrl,
+                            htmlUrl: link.viewUrl,
                             type: 'link',
                             category: getFileCategory(item.path),
                             isOnline: true,
-                            originalUrl: link.url
+                            originalUrl: link.url,
+                            platform: link.platform,
+                            platformType: link.type,
+                            embedUrl: link.embedUrl,
+                            viewUrl: link.viewUrl
                         });
                     });
                 } catch (error) {
@@ -197,30 +201,89 @@ function isOnlineLink(content) {
     );
 }
 
+function getGoogleDriveDirectLink(shareUrl) {
+    // Convert Google Drive share link to direct download/view link
+    const fileIdMatch = shareUrl.match(/\/file\/d\/([a-zA-Z0-9-_]+)/);
+    if (fileIdMatch) {
+        const fileId = fileIdMatch[1];
+        return {
+            viewUrl: `https://drive.google.com/file/d/${fileId}/preview`,
+            downloadUrl: `https://drive.google.com/uc?export=download&id=${fileId}`,
+            embedUrl: `https://drive.google.com/file/d/${fileId}/preview`
+        };
+    }
+    return { viewUrl: shareUrl, downloadUrl: shareUrl, embedUrl: shareUrl };
+}
+
+function getOneDriveDirectLink(shareUrl) {
+    // Convert OneDrive share link to direct link
+    if (shareUrl.includes('1drv.ms') || shareUrl.includes('onedrive.live.com')) {
+        // For OneDrive, we'll use the original link and try to convert for download
+        const downloadUrl = shareUrl.replace('/view.aspx?', '/download.aspx?');
+        return {
+            viewUrl: shareUrl,
+            downloadUrl: downloadUrl,
+            embedUrl: shareUrl
+        };
+    }
+    return { viewUrl: shareUrl, downloadUrl: shareUrl, embedUrl: shareUrl };
+}
+
+function processOnlineLink(url) {
+    const lowerUrl = url.toLowerCase();
+    
+    if (lowerUrl.includes('drive.google.com')) {
+        return { ...getGoogleDriveDirectLink(url), platform: 'Google Drive', type: 'googledrive' };
+    } else if (lowerUrl.includes('onedrive.live.com') || lowerUrl.includes('1drv.ms')) {
+        return { ...getOneDriveDirectLink(url), platform: 'OneDrive', type: 'onedrive' };
+    } else if (lowerUrl.includes('sharepoint.com')) {
+        return { viewUrl: url, downloadUrl: url, embedUrl: url, platform: 'SharePoint', type: 'sharepoint' };
+    } else if (lowerUrl.includes('dropbox.com')) {
+        const downloadUrl = url.replace('?dl=0', '?dl=1');
+        return { viewUrl: url, downloadUrl: downloadUrl, embedUrl: url, platform: 'Dropbox', type: 'dropbox' };
+    }
+    
+    return { viewUrl: url, downloadUrl: url, embedUrl: url, platform: 'Web Link', type: 'weblink' };
+}
+
 function parseLinksFile(content) {
     const links = [];
     const lines = content.split('\n');
     
     for (const line of lines) {
         const trimmed = line.trim();
-        if (trimmed && (trimmed.startsWith('http') || isOnlineLink(trimmed))) {
+        if (trimmed && !trimmed.startsWith('#') && (trimmed.startsWith('http') || isOnlineLink(trimmed))) {
             // Extract title from line (format: "Title - URL" or just "URL")
             const parts = trimmed.split(' - ');
+            let title, url;
+            
             if (parts.length >= 2) {
-                links.push({
-                    title: parts[0].trim(),
-                    url: parts[1].trim()
-                });
+                title = parts[0].trim();
+                url = parts[1].trim();
             } else {
-                // Try to extract filename from URL
-                const urlObj = new URL(trimmed);
-                const pathname = urlObj.pathname;
-                const filename = pathname.split('/').pop() || 'Online File';
-                links.push({
-                    title: filename,
-                    url: trimmed
-                });
+                url = trimmed;
+                // Try to extract filename from URL or use platform name
+                try {
+                    const urlObj = new URL(url);
+                    const pathname = urlObj.pathname;
+                    title = pathname.split('/').pop() || 'Online File';
+                    
+                    // If no meaningful title, use platform-specific title
+                    if (!title || title === 'view' || title === 'preview') {
+                        const linkInfo = processOnlineLink(url);
+                        title = `${linkInfo.platform} File`;
+                    }
+                } catch {
+                    title = 'Online File';
+                }
             }
+            
+            const linkInfo = processOnlineLink(url);
+            links.push({
+                title: title,
+                url: url,
+                ...linkInfo
+            });
         }
     }
     return links;
@@ -350,50 +413,132 @@ function createFileCard(file) {
     card.className = 'file-card';
     
     let iconClass = 'fas fa-file';
-    if (file.type === 'pdf') iconClass = 'fas fa-file-pdf pdf';
-    else if (file.type === 'md') iconClass = 'fab fa-markdown md';
-    else if (file.type === 'link') iconClass = 'fas fa-link link';
+    let iconColor = '';
+    
+    if (file.type === 'pdf') {
+        iconClass = 'fas fa-file-pdf pdf';
+    } else if (file.type === 'md') {
+        iconClass = 'fab fa-markdown md';
+    } else if (file.type === 'link') {
+        if (file.platformType === 'googledrive') {
+            iconClass = 'fab fa-google-drive';
+            iconColor = 'color: #4285f4;';
+        } else if (file.platformType === 'onedrive') {
+            iconClass = 'fab fa-microsoft';
+            iconColor = 'color: #0078d4;';
+        } else if (file.platformType === 'dropbox') {
+            iconClass = 'fab fa-dropbox';
+            iconColor = 'color: #0061ff;';
+        } else {
+            iconClass = 'fas fa-external-link-alt link';
+        }
+    }
     
     const fileSize = file.isOnline ? 'Online File' : formatFileSize(file.size);
     
     // Create unique button IDs for event handling
     const viewBtnId = `view-${Math.random().toString(36).substr(2, 9)}`;
     const downloadBtnId = `download-${Math.random().toString(36).substr(2, 9)}`;
+    const previewBtnId = `preview-${Math.random().toString(36).substr(2, 9)}`;
     
     card.innerHTML = `
         <div class="file-header">
-            <i class="${iconClass} file-icon"></i>
+            <i class="${iconClass} file-icon" style="${iconColor}"></i>
             <div class="file-name">${escapeHtml(file.name)}</div>
             <div class="file-path">${escapeHtml(file.path)}</div>
             <div class="file-size">${fileSize}</div>
-            ${file.isOnline ? '<div class="online-badge"><i class="fas fa-cloud"></i> Online</div>' : ''}
+            ${file.isOnline ? `<div class="platform-badge ${file.platformType}">
+                <i class="fas fa-cloud"></i> ${file.platform}
+            </div>` : ''}
         </div>
         <div class="file-actions">
+            ${file.isOnline && (file.platformType === 'googledrive' || file.platformType === 'onedrive') ? `
+                <button id="${previewBtnId}" class="action-btn preview-btn">
+                    <i class="fas fa-play"></i>
+                    Preview
+                </button>
+            ` : ''}
             <button id="${viewBtnId}" class="action-btn view-btn">
                 <i class="fas fa-${file.isOnline ? 'external-link-alt' : 'eye'}"></i>
                 ${file.isOnline ? 'Open' : 'View'}
             </button>
             <a id="${downloadBtnId}" href="${file.downloadUrl}" ${file.isOnline ? 'target="_blank"' : `download="${file.name}"`} class="action-btn download-btn">
-                <i class="fas fa-${file.isOnline ? 'external-link-alt' : 'download'}"></i>
-                ${file.isOnline ? 'Access' : 'Download'}
+                <i class="fas fa-${file.isOnline ? 'download' : 'download'}"></i>
+                Download
             </a>
-            <button class="action-btn copy-btn" onclick="copyToClipboard('${file.downloadUrl}')" title="Copy link">
+            <button class="action-btn copy-btn" onclick="copyToClipboard('${file.originalUrl || file.downloadUrl}')" title="Copy link">
                 <i class="fas fa-copy"></i>
             </button>
         </div>
     `;
     
-    // Add event listener for view button after card is created
+    // Add event listeners after card is created
     setTimeout(() => {
         const viewBtn = document.getElementById(viewBtnId);
+        const previewBtn = document.getElementById(previewBtnId);
+        
         if (viewBtn) {
             viewBtn.addEventListener('click', () => {
-                window.open(file.downloadUrl, '_blank');
+                window.open(file.viewUrl || file.downloadUrl, '_blank');
+            });
+        }
+        
+        if (previewBtn) {
+            previewBtn.addEventListener('click', () => {
+                showFilePreview(file);
             });
         }
     }, 0);
     
     return card;
+}
+
+function showFilePreview(file) {
+    // Create modal for file preview
+    const modal = document.createElement('div');
+    modal.className = 'preview-modal';
+    modal.innerHTML = `
+        <div class="preview-modal-content">
+            <div class="preview-header">
+                <h3>${escapeHtml(file.name)}</h3>
+                <button class="preview-close" onclick="closePreview()">&times;</button>
+            </div>
+            <div class="preview-body">
+                <iframe src="${file.embedUrl}" frameborder="0" allowfullscreen></iframe>
+            </div>
+            <div class="preview-footer">
+                <a href="${file.viewUrl}" target="_blank" class="action-btn view-btn">
+                    <i class="fas fa-external-link-alt"></i>
+                    Open in ${file.platform}
+                </a>
+                <a href="${file.downloadUrl}" target="_blank" class="action-btn download-btn">
+                    <i class="fas fa-download"></i>
+                    Download
+                </a>
+                <button class="action-btn copy-btn" onclick="copyToClipboard('${file.originalUrl}')">
+                    <i class="fas fa-copy"></i>
+                    Copy Link
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    modal.style.display = 'flex';
+    
+    // Close on background click
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closePreview();
+        }
+    });
+}
+
+function closePreview() {
+    const modal = document.querySelector('.preview-modal');
+    if (modal) {
+        modal.remove();
+    }
 }
 
 function formatFileSize(bytes) {
