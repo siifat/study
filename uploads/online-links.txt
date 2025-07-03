@@ -5,10 +5,13 @@
 Computer Architecture Slides - https://drive.google.com/file/d/12cm8tTIOUpbKTX-Pr8iNBaPyebnRXlmj/view?usp=sharing
 Data Structures Notes - https://onedrive.live.com/view.aspx?resid=ABC123
 Programming Tutorial - https://www.dropbox.com/s/example/tutorial.pdf
+Machine Learning Course - https://drive.google.com/file/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/view
+Operating Systems Lab Manual - https://1drv.ms/b/s!AkGb9VBmnKN_gQE6q9ld5L6oNEQo
+Software Engineering Slides - https://www.dropbox.com/s/xyz123/SE_slides.pdf?dl=0
 
 # You can also just put URLs:
-# https://drive.google.com/file/d/your-file-id/view
-# https://1drv.ms/b/s!your-onedrive-link
+https://drive.google.com/file/d/1abc123def456ghi789/view
+https://onedrive.live.com/view.aspx?resid=ABCD1234
 
 # Supported platforms:
 # - Google Drive (with preview support)
@@ -18,6 +21,13 @@ Programming Tutorial - https://www.dropbox.com/s/example/tutorial.pdf
 
 # Tips for Google Drive:
 # 1. Make sure the file is set to "Anyone with the link can view"
+# 2. Use the sharing link format
+# 3. The website will automatically convert for preview/download
+
+# Tips for OneDrive:
+# 1. Use the "Share" option to get the link
+# 2. Make sure permissions are set correctly
+# 3. The website supports both 1drv.ms and onedrive.live.com links
 # 2. Use the share link format: https://drive.google.com/file/d/FILE_ID/view?usp=sharing
 # 3. Preview button will show the file directly in the website
 

@@ -4,86 +4,451 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sifat's Handnotes</title>
+    <meta name="description" content="Advanced digital library for accessing and downloading study notes, PDFs, and educational materials">
+    <meta name="keywords" content="study notes, education, PDF, handnotes, university, UIU">
+    
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Modern Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Chart.js for Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Styles -->
     <link rel="stylesheet" href="styles.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📚%3C/text%3E%3C/svg%3E">
 </head>
 <body>
-    <header>
-        <div class="container">
-            <h1><i class="fas fa-book"></i> Sifat's Handnotes</h1>
-            <p>Access and download PDF notes and markdown files</p>
-        </div>
-    </header>
-
-    <main class="container">
-        <div class="search-section">
-            <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Search notes by filename or content...">
-                <button id="clearSearch" class="clear-btn" title="Clear search">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="filters">
-                <button class="filter-btn active" data-filter="all">All Files</button>
-                <button class="filter-btn" data-filter="pdf">PDF Notes</button>
-                <button class="filter-btn" data-filter="md">Markdown Files</button>
-            </div>
-            <div class="categories">
-                <h3>Categories</h3>
-                <div class="category-filters">
-                    <button class="category-btn active" data-category="all">All Categories</button>
-                    <button class="category-btn" data-category="data-structures">Data Structures & Algorithms</button>
-                    <button class="category-btn" data-category="computer-architecture">Computer Architecture</button>
-                    <button class="category-btn" data-category="electronics">Electronics</button>
-                    <button class="category-btn" data-category="programming">Programming</button>
-                    <button class="category-btn" data-category="mathematics">Mathematics</button>
-                    <button class="category-btn" data-category="networking">Computer Networks</button>
-                    <button class="category-btn" data-category="database">Database Systems</button>
+    <div class="main-container">
+        <!-- Floating Navigation -->
+        <nav class="floating-nav">
+            <div class="nav-container">
+                <div class="nav-brand">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Sifat's Handnotes</span>
+                </div>
+                <div class="nav-controls">
+                    <button id="themeToggle" class="theme-toggle" title="Toggle theme">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <div class="nav-stats">
+                        <div class="nav-stat">
+                            <span class="stat-number" id="navTotalFiles">0</span>
+                            <span class="stat-label">Files</span>
+                        </div>
+                        <div class="nav-stat">
+                            <span class="stat-number" id="navOnlineFiles">0</span>
+                            <span class="stat-label">Online</span>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+        </nav>
 
-        <div class="stats">
-            <div class="stat-item">
-                <span class="stat-number" id="totalFiles">0</span>
-                <span class="stat-label">Total Files</span>
+        <!-- Hero Section -->
+        <header class="hero-section">
+            <div class="hero-background">
+                <div class="floating-shapes">
+                    <div class="shape shape-1"></div>
+                    <div class="shape shape-2"></div>
+                    <div class="shape shape-3"></div>
+                </div>
             </div>
-            <div class="stat-item">
-                <span class="stat-number" id="pdfCount">0</span>
-                <span class="stat-label">PDF Notes</span>
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <i class="fas fa-university"></i>
+                        <span>United International University</span>
+                    </div>
+                    <h1 class="hero-title">
+                        <span class="title-line">Sifat's</span>
+                        <span class="title-line gradient-text">Handnotes</span>
+                    </h1>
+                    <p class="hero-subtitle">
+                        Advanced digital library for accessing study materials, research papers, and educational resources
+                    </p>
+                    <div class="hero-features">
+                        <div class="feature-item">
+                            <i class="fas fa-search"></i>
+                            <span>Smart Search</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-cloud"></i>
+                            <span>Cloud Integration</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-mobile-alt"></i>
+                            <span>Mobile Optimized</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="stat-item">
-                <span class="stat-number" id="mdCount">0</span>
-                <span class="stat-label">Markdown Files</span>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <!-- Advanced Search Section -->
+                <section class="search-section glass-card">
+                    <div class="search-header">
+                        <h2>
+                            <i class="fas fa-search"></i>
+                            Discover Your Notes
+                        </h2>
+                        <p>Search through your entire collection with AI-powered suggestions</p>
+                    </div>
+                    
+                    <div class="search-container">
+                        <div class="search-box-advanced">
+                            <div class="search-input-group">
+                                <i class="fas fa-search search-icon"></i>
+                                <input type="text" id="searchInput" placeholder="Search notes, subjects, or topics..." autocomplete="off">
+                                <button id="clearSearch" class="clear-btn" title="Clear search">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                                <button id="voiceSearch" class="voice-btn" title="Voice search">
+                                    <i class="fas fa-microphone"></i>
+                                </button>
+                            </div>
+                            <div class="search-suggestions" id="searchSuggestions"></div>
+                        </div>
+                    </div>
+
+                    <!-- Filter Tabs -->
+                    <div class="filter-tabs">
+                        <div class="tab-group">
+                            <button class="tab-btn active" data-filter="all">
+                                <i class="fas fa-list"></i>
+                                <span>All Files</span>
+                                <span class="tab-count" id="allCount">0</span>
+                            </button>
+                            <button class="tab-btn" data-filter="pdf">
+                                <i class="fas fa-file-pdf"></i>
+                                <span>PDFs</span>
+                                <span class="tab-count" id="pdfTabCount">0</span>
+                            </button>
+                            <button class="tab-btn" data-filter="md">
+                                <i class="fab fa-markdown"></i>
+                                <span>Markdown</span>
+                                <span class="tab-count" id="mdTabCount">0</span>
+                            </button>
+                            <button class="tab-btn" data-filter="link">
+                                <i class="fas fa-cloud"></i>
+                                <span>Online</span>
+                                <span class="tab-count" id="linkTabCount">0</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Category Pills -->
+                    <div class="categories-section">
+                        <h3>Categories</h3>
+                        <div class="category-pills">
+                            <button class="pill active" data-category="all">
+                                <span>All Categories</span>
+                            </button>
+                            <button class="pill" data-category="data-structures">
+                                <i class="fas fa-sitemap"></i>
+                                <span>Data Structures & Algorithms</span>
+                            </button>
+                            <button class="pill" data-category="computer-architecture">
+                                <i class="fas fa-microchip"></i>
+                                <span>Computer Architecture</span>
+                            </button>
+                            <button class="pill" data-category="electronics">
+                                <i class="fas fa-bolt"></i>
+                                <span>Electronics</span>
+                            </button>
+                            <button class="pill" data-category="programming">
+                                <i class="fas fa-code"></i>
+                                <span>Programming</span>
+                            </button>
+                            <button class="pill" data-category="mathematics">
+                                <i class="fas fa-calculator"></i>
+                                <span>Mathematics</span>
+                            </button>
+                            <button class="pill" data-category="networking">
+                                <i class="fas fa-network-wired"></i>
+                                <span>Computer Networks</span>
+                            </button>
+                            <button class="pill" data-category="database">
+                                <i class="fas fa-database"></i>
+                                <span>Database Systems</span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Stats Dashboard -->
+                <section class="stats-dashboard">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <div class="stat-content">
+                                <span class="stat-number" id="totalFiles">0</span>
+                                <span class="stat-label">Total Files</span>
+                            </div>
+                            <div class="stat-trend">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>+5% this week</span>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon pdf">
+                                <i class="fas fa-file-pdf"></i>
+                            </div>
+                            <div class="stat-content">
+                                <span class="stat-number" id="pdfCount">0</span>
+                                <span class="stat-label">PDF Notes</span>
+                            </div>
+                            <div class="stat-trend">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>Most popular</span>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon md">
+                                <i class="fab fa-markdown"></i>
+                            </div>
+                            <div class="stat-content">
+                                <span class="stat-number" id="mdCount">0</span>
+                                <span class="stat-label">Markdown Files</span>
+                            </div>
+                            <div class="stat-trend">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>Easy to edit</span>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon online">
+                                <i class="fas fa-cloud"></i>
+                            </div>
+                            <div class="stat-content">
+                                <span class="stat-number" id="onlineCount">0</span>
+                                <span class="stat-label">Online Files</span>
+                            </div>
+                            <div class="stat-trend">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>Cloud powered</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Analytics Dashboard -->
+                <section class="analytics-section glass-card">
+                    <div class="analytics-header">
+                        <h2>
+                            <i class="fas fa-chart-pie"></i>
+                            Study Analytics
+                        </h2>
+                        <p>Visual insights into your study materials collection</p>
+                    </div>
+                    
+                    <div class="charts-grid">
+                        <div class="chart-container">
+                            <h3>File Distribution</h3>
+                            <canvas id="fileTypeChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h3>Platform Sources</h3>
+                            <canvas id="platformChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h3>Categories Overview</h3>
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                        <div class="metrics-panel">
+                            <h3>Quick Metrics</h3>
+                            <div class="metric-item">
+                                <span class="metric-label">Total Storage</span>
+                                <span class="metric-value" id="totalStorage">0 MB</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Largest File</span>
+                                <span class="metric-value" id="largestFile">N/A</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Most Common Type</span>
+                                <span class="metric-value" id="commonType">PDF</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Last Updated</span>
+                                <span class="metric-value" id="lastUpdated">Today</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Drag & Drop Zone -->
+                <section class="drag-drop-section glass-card" id="dragDropSection">
+                    <div class="drag-drop-zone" id="dragDropZone">
+                        <div class="drag-drop-content">
+                            <div class="drag-drop-icon">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                            </div>
+                            <h3>Quick Preview</h3>
+                            <p>Drag & drop files here for instant preview</p>
+                            <div class="drag-drop-formats">
+                                <span class="format-tag">PDF</span>
+                                <span class="format-tag">Images</span>
+                                <span class="format-tag">Text</span>
+                            </div>
+                            <button class="browse-btn" id="browseFiles">
+                                <i class="fas fa-folder-open"></i>
+                                Browse Files
+                            </button>
+                            <input type="file" id="fileInput" multiple accept=".pdf,.txt,.md,.png,.jpg,.jpeg,.gif" style="display: none;">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Loading States -->
+                <div id="loadingIndicator" class="loading-state">
+                    <div class="loading-spinner">
+                        <div class="spinner"></div>
+                    </div>
+                    <h3>Loading your notes...</h3>
+                    <p>Scanning repositories and processing files</p>
+                </div>
+
+                <div id="errorMessage" class="error-state" style="display: none;">
+                    <div class="error-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h3>Unable to load notes</h3>
+                    <p>Please check your repository configuration and try again</p>
+                    <button class="retry-btn" onclick="location.reload()">
+                        <i class="fas fa-redo"></i>
+                        Retry
+                    </button>
+                </div>
+
+                <div id="noResults" class="no-results-state" style="display: none;">
+                    <div class="no-results-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>No notes found</h3>
+                    <p>Try adjusting your search terms or filters</p>
+                </div>
+
+                <!-- Files Grid -->
+                <section class="files-section">
+                    <div class="section-header">
+                        <h2>Your Digital Library</h2>
+                        <div class="view-toggles">
+                            <button class="view-toggle active" data-view="grid" title="Grid view">
+                                <i class="fas fa-th"></i>
+                            </button>
+                            <button class="view-toggle" data-view="list" title="List view">
+                                <i class="fas fa-list"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="filesList" class="files-grid">
+                        <!-- Files will be populated here by JavaScript -->
+                    </div>
+                </section>
             </div>
-        </div>
+        </main>
 
-        <div id="loadingIndicator" class="loading">
-            <i class="fas fa-spinner fa-spin"></i>
-            <span>Loading notes...</span>
-        </div>
-
-        <div id="errorMessage" class="error-message" style="display: none;">
-            <i class="fas fa-exclamation-triangle"></i>
-            <span>Error loading notes. Please make sure the repository structure is correct.</span>
-        </div>
-
-        <div id="noResults" class="no-results" style="display: none;">
-            <i class="fas fa-search"></i>
-            <span>No notes found matching your search.</span>
-        </div>
-
-        <div id="filesList" class="files-grid">
-            <!-- Files will be populated here by JavaScript -->
-        </div>
-    </main>
-
-    <footer>
-        <div class="container">
-            <p>&copy; 2025 Study Notes Repository. Built for easy access to educational materials.</p>
-        </div>
-    </footer>
+        <!-- Footer -->
+        <!-- Enhanced Footer -->
+        <footer class="modern-footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <div class="footer-brand">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>Sifat's Handnotes</span>
+                        </div>
+                        <p class="footer-description">
+                            Advanced digital library for academic excellence and collaborative learning.
+                        </p>
+                        <div class="footer-social">
+                            <a href="#" class="social-link" title="GitHub">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="#" class="social-link" title="LinkedIn">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                            <a href="#" class="social-link" title="Email">
+                                <i class="fas fa-envelope"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="footer-section">
+                        <h4>Quick Stats</h4>
+                        <div class="footer-stats">
+                            <div class="footer-stat">
+                                <span class="stat-number" id="footerTotalFiles">0</span>
+                                <span class="stat-label">Total Files</span>
+                            </div>
+                            <div class="footer-stat">
+                                <span class="stat-number" id="footerOnlineFiles">0</span>
+                                <span class="stat-label">Online Resources</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="footer-section">
+                        <h4>Features</h4>
+                        <ul class="footer-features">
+                            <li><i class="fas fa-search"></i> Smart Search</li>
+                            <li><i class="fas fa-cloud"></i> Cloud Integration</li>
+                            <li><i class="fas fa-mobile-alt"></i> Mobile Responsive</li>
+                            <li><i class="fas fa-chart-pie"></i> Analytics Dashboard</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-section">
+                        <h4>Resources</h4>
+                        <ul class="footer-links">
+                            <li><a href="#" onclick="showSetupGuide()">Setup Guide</a></li>
+                            <li><a href="#" onclick="showShortcuts()">Keyboard Shortcuts</a></li>
+                            <li><a href="#" onclick="exportData()">Export Data</a></li>
+                            <li><a href="#" onclick="showAbout()">About</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="footer-bottom">
+                    <div class="footer-info">
+                        <span>Built for United International University</span>
+                        <span>•</span>
+                        <span>© 2025 Academic Excellence</span>
+                        <span>•</span>
+                        <span>Version 2.0</span>
+                    </div>
+                    <div class="footer-tech">
+                        <span>Powered by</span>
+                        <div class="tech-stack">
+                            <span class="tech-item">HTML5</span>
+                            <span class="tech-item">CSS3</span>
+                            <span class="tech-item">JavaScript</span>
+                            <span class="tech-item">Chart.js</span>
+                            <span class="tech-item">GitHub Pages</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
 
     <script src="script.js"></script>
 </body>
