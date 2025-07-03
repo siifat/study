@@ -7,7 +7,7 @@ const CONFIG = {
     GITHUB_BRANCH: 'main', // Usually 'main' or 'master'
     
     // Folders to scan for notes (relative to repository root)
-    NOTE_FOLDERS: ['notes', 'pdfs', 'markdown', 'documents', ''], // Empty string scans root
+    NOTE_FOLDERS: ['notes', 'pdfs', 'markdown', 'documents', ''], // Empty string scans Root
     
     // File extensions to include
     ALLOWED_EXTENSIONS: ['.pdf', '.md', '.markdown'],
